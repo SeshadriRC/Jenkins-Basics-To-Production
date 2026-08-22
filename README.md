@@ -1,6 +1,6 @@
 ![Jenkins – Basics to Production](https://img.shields.io/badge/Jenkins-Basics_to_Production-blue?style=for-the-badge&logo=jenkins&logoColor=white)
 # Jenkins: Basics to Production Course
-
+.
 Welcome to the official GitHub repository for the **Jenkins – Basics to Production** course!
 
 This repository is your one-stop hub for all the Jenkins pipelines, configuration files, and resources you'll need throughout the course. Whether you’re just starting out or looking to sharpen your CI/CD knowledge, you’re in the right place to master Jenkins with real-world, production-ready examples.
