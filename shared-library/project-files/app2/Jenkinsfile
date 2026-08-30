@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label: 'docker-agent-devsecops'
+    }
     environment {
         REPO = "app2-flask"
         TAG   = "${BUILD_NUMBER}"
