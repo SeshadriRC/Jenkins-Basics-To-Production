@@ -1,0 +1,109 @@
+services:
+  # ===========================================================
+  # 1. PostgreSQL Database (Dedicated for SonarQube)
+  # ===========================================================
+  sonarqube-db:
+    image: postgres:15-alpine
+    container_name: sonarqube-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonarpassword123
+      POSTGRES_DB: sonarqube
+    volumes:
+      - postgres_sonar_data:/var/lib/postgresql/data
+    networks:
+      - devsecops-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar -d sonarqube"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===========================================================
+  # 2. SonarQube Server
+  # ===========================================================
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonarqube-db:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonarpassword123
+      - SONAR_JDBC_URL=jdbc:postgresql://sonarqube-db:5432/sonarqube
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - devsecops-net
+
+  # ===========================================================
+  # 3. Jenkins Controller (Master / Orchestrator)
+  # ===========================================================
+  jenkins-controller:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-controller
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      - TZ=Asia/Kolkata
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - devsecops-net
+
+  # ===========================================================
+  # 4. Jenkins Inbound Agent (Build Worker)
+  # ===========================================================
+  jenkins-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    container_name: jenkins-agent
+    restart: unless-stopped
+    depends_on:
+      - jenkins-controller
+    group_add:
+      - "0"
+    environment:
+      - JENKINS_URL=http://jenkins-controller:8080
+      - JENKINS_AGENT_NAME=docker-agent
+      - JENKINS_SECRET=${JENKINS_AGENT_SECRET}
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins_agent_workdir:/home/jenkins/agent
+    networks:
+      - devsecops-net
+
+# =============================================================
+# Persistent Storage Volumes
+# =============================================================
+volumes:
+  postgres_sonar_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  jenkins_home:
+    external: true  # <-- Tells Compose to attach the existing 'jenkins_home' volume
+  jenkins_agent_workdir:
+
+# =============================================================
+# Shared Bridge Network
+# =============================================================
+networks:
+  devsecops-net:
+    name: devsecops-net
+    driver: bridge
