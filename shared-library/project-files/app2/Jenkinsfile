@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label: 'docker-agent-devsecops'
+        label 'docker-agent-devsecops'
     }
     environment {
         REPO = "app2-flask"
