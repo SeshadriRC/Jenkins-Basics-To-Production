@@ -566,8 +566,11 @@ def call() {
 
 ## Step 2: Create Jenkins Shared Library
 
-* **Open** `Manage Jenkins` → `System` → `Global Pipeline Libraries`.
+* **Open** `Manage Jenkins` → `System` → `Global Trusted Pipeline Libraries`.
   This is where you register a reusable library that pipelines can import.
+
+<img width="1917" height="782" alt="image" src="https://github.com/user-attachments/assets/ba2b5cda-a47f-4523-ae28-10acb39da547" />
+
 
 * **Name**: `my-first-shared-library`.
   This identifier is what you reference later in `@Library('...')`.
@@ -592,6 +595,8 @@ def call() {
 
 * **Save and verify**: after saving, confirm Jenkins can reach the repository and that the configured name matches what you will use in `@Library`.
   Check connectivity and validate that the repository is accessible from the Jenkins controller.
+
+<img width="1832" height="781" alt="image" src="https://github.com/user-attachments/assets/c3c5a28e-9d11-4630-ace9-64d02c3d85ba" />
 
 
 ---
