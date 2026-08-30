@@ -657,6 +657,9 @@ pipeline {
 
 * Confirm the build completed successfully; look for `Finished: SUCCESS` near the end of the log.
 
+<img width="1883" height="775" alt="image" src="https://github.com/user-attachments/assets/88dee1e4-389b-4c8a-97c7-6ccb12d92e86" />
+
+
 ---
 
 # Demo 2: Private repos + Jenkins Shared Library
