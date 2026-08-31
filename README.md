@@ -62,4 +62,14 @@ Your star motivates me to keep creating high-quality, free learning content.
 * Subscribe to my **[YouTube Channel: Cloud With VarJosh](https://www.youtube.com/@CloudWithVarJosh)**
 * Explore my other repos on **[GitHub](https://github.com/CloudWithVarJosh)**
 
+
+## Mylearnings
+
+- Below github repos i created, as part of this course
+
+```bash
+https://github.com/SeshadriRC/shared-library-demo
+https://github.com/SeshadriRC/Python-app-private-repo
+```
+
 ---
