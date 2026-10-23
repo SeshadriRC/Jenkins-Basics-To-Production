@@ -417,3 +417,9 @@ You can either create a new job or update your existing Phase 1 job:
 | `QUALITY GATE STATUS: FAILED` | Code does not satisfy Quality Gate rules (e.g. unreviewed hotspots or coverage threshold). | Review the failed conditions at `http://43.204.100.125:8090/dashboard?id=cwvj-devsecops-demo`. Resolve code issues or mark hotspots as reviewed. |
 | Pipeline hangs indefinitely in Sonar stage | Quality Gate wait timeout or unreachable SonarQube compute engine. | Check `docker logs sonarqube` to confirm Compute Engine (`ce`) is healthy and processing tasks. |
 | Test coverage is reported as 0.0% in SonarQube | JaCoCo execution did not run before SonarQube or XML report path was not passed. | Ensure `mvn clean test` runs with JaCoCo `report` goal bound to `test` phase, and pass `-Dsonar.coverage.jacoco.xmlReportPaths="target/site/jacoco/jacoco.xml"`. |
+
+---
+
+# Output
+
+<img width="1917" height="845" alt="image" src="https://github.com/user-attachments/assets/c0aa644f-4272-434c-b4ce-1eb5cb116fd9" />
