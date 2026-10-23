@@ -335,6 +335,9 @@ A Quality Gate is a set of Boolean conditions (e.g. `Coverage < 80%`, `Bugs > 0`
 >
 > On the very first analysis of a branch or project, SonarQube establishes a **baseline**. Because no prior commit existed on SonarQube, there was **0 lines of New Code**! Since all 27 lines were treated as baseline "Overall Code", 0 conditions failed, and SonarQube reported `QUALITY GATE STATUS: PASSED (OK)`.
 
+<img width="1917" height="846" alt="image" src="https://github.com/user-attachments/assets/a65f5aea-e43a-487d-b1fa-9136c4f986d0" />
+
+
 ---
 
 ### How to Make the Pipeline FAIL on Low Code Coverage
