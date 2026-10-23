@@ -16,6 +16,8 @@ This repository is your one-stop hub for all the Jenkins pipelines, configuratio
 
 - [Day-1: Modern SDLC Explained](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2001)
 - [Day-2: CICD - Pipeline Strategies](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2002)
+- [Day-3: Jenkins Installation - docker setup - freestyle-job](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2003)
+- [Day-4: Jenkins Freestyle Power-Ups | Build Parameters, Branch Input, Poll SCM & Cron Cleanup](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2004)
   
 ---
 
