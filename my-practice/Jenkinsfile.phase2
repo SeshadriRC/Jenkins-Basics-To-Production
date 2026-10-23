@@ -1,0 +1,89 @@
+pipeline {
+    agent {
+        label 'docker-agent'
+    }
+
+    options {
+        timeout(time: 20, unit: 'MINUTES')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    environment {
+        APP_DIR = 'my-practice/app'
+        SONAR_HOST_URL = 'http://sonarqube:9000'
+        SONAR_PROJECT_KEY = 'cwvj-devsecops-demo'
+        SONAR_PROJECT_NAME = 'CVWJ DevSecOps Demo'
+    }
+
+    stages {
+        stage('Environment Discovery') {
+            steps {
+                sh '''
+                    echo "=== Running on Agent: $(hostname) ==="
+                    echo "Current User: $(whoami) (UID: $(id -u))"
+                    java -version
+                    mvn -version
+                    echo "=== Auditing SonarQube Reachability ==="
+                    curl -sI ${SONAR_HOST_URL}/api/system/status || true
+                '''
+            }
+        }
+
+        stage('Compile & Unit Test') {
+            steps {
+                dir("${env.APP_DIR}") {
+                    sh 'mvn clean test'
+                }
+            }
+            post {
+                always {
+                    junit testResults: "${env.APP_DIR}/target/surefire-reports/*.xml",
+                          allowEmptyResults: true
+                }
+            }
+        }
+
+        stage('SonarQube SAST & Quality Gate') {
+            steps {
+                dir("${env.APP_DIR}") {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                            mvn sonar:sonar \
+                              -Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+                              -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+                              -Dsonar.host.url="${SONAR_HOST_URL}" \
+                              -Dsonar.token="${SONAR_TOKEN}" \
+                              -Dsonar.coverage.jacoco.xmlReportPaths="target/site/jacoco/jacoco.xml" \
+                              -Dsonar.qualitygate.wait=true
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                dir("${env.APP_DIR}") {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: "${env.APP_DIR}/target/*.jar",
+                                 fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Phase 2 Build #${env.BUILD_NUMBER} passed all Quality Gates and completed successfully!"
+        }
+        failure {
+            echo "❌ Phase 2 Build #${env.BUILD_NUMBER} failed. Review JUnit test results or SonarQube Quality Gate status."
+        }
+    }
+}

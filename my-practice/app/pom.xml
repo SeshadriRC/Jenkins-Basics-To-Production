@@ -15,6 +15,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jacoco.version>0.8.11</jacoco.version>
     <junit.jupiter.version>5.9.3</junit.jupiter.version>
+    <sonar.version>5.0.0.4389</sonar.version>
+    <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
   </properties>
 
   <dependencies>
@@ -62,10 +64,16 @@
           </execution>
           <execution>
             <id>report</id>
-            <phase>prepare-package</phase>
+            <phase>test</phase>
             <goals><goal>report</goal></goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>${sonar.version}</version>
       </plugin>
 
       <plugin>

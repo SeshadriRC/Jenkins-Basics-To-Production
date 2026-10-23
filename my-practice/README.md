@@ -31,8 +31,8 @@ Welcome to the hands-on DevSecOps engineering lab. This workspace tracks our ste
 
 | Phase | Milestone | Focus Areas | Status |
 |---|---|---|---|
-| **Phase 1** | **Core CI Pipeline** | Agent topology, Maven Build, Unit Tests, JaCoCo Coverage, Artifact Archiving | 🟡 In Progress |
-| **Phase 2** | **SAST & Quality Gate** | SonarQube integration, Security Hotspots, Quality Gate enforcement | ⚪ Pending |
+| **Phase 1** | **Core CI Pipeline** | Agent topology, Maven Build, Unit Tests, JaCoCo Coverage, Artifact Archiving | 🟢 Completed |
+| **Phase 2** | **SAST & Quality Gate** | SonarQube integration, Security Hotspots, Quality Gate enforcement | 🟡 Ready to Execute |
 | **Phase 3** | **Hardened Containerization** | Non-root Dockerfile, multi-stage builds, immutable semantic tagging | ⚪ Pending |
 | **Phase 4** | **Shift-Left Security (Trivy)** | Secret scanning, SCA dependency checks, container vulnerability gating | ⚪ Pending |
 | **Phase 5** | **EC2 to Laptop Kind Networking** | SSH reverse tunnel / Tailscale, Kubeconfig management, Jenkins credentials | ⚪ Pending |
@@ -45,6 +45,10 @@ Welcome to the hands-on DevSecOps engineering lab. This workspace tracks our ste
 - [Phase 1: CI Foundations & Maven Build](docs/01-ci-foundations.md)
   - [Section 1-7: Architecture, Code Deep-Dive & Failure Analysis](docs/01-ci-foundations.md#1-architectural-overview)
   - [Section 8: Jenkins UI Practical Setup & Execution Guide](docs/01-ci-foundations.md#8-jenkins-ui-practical-walkthrough-creating--running-the-job)
+- [Phase 2: SAST & SonarQube Quality Gates](docs/02-sast-sonarqube.md)
+  - [Section 1-7: Architecture, AST Analysis, Code Audit & Fail-Fast Gates](docs/02-sast-sonarqube.md#1-architectural-overview--network-topology)
+  - [Section 8: SonarQube Token Generation & Jenkins Pipeline Execution Walkthrough](docs/02-sast-sonarqube.md#8-jenkins-ui--sonarqube-hands-on-practical-walkthrough)
+  - [Section 9: Troubleshooting & Pitfalls Matrix](docs/02-sast-sonarqube.md#9-comprehensive-troubleshooting--pitfalls-matrix)
 
 ---
 
@@ -71,4 +75,32 @@ Follow these exact steps inside your Jenkins dashboard (`http://<EC2-IP>:8080`):
    - Download the built uber-JAR from **Last Successful Artifacts**.
 
 For complete details, parameter breakdowns, and troubleshooting, read the full [Phase 1 Guide](docs/01-ci-foundations.md).
+
+---
+
+## Phase 2 Quick-Start: SonarQube SAST & Quality Gate
+
+Follow these exact steps to run the SAST and Quality Gate pipeline:
+
+1. **Generate SonarQube Token**:
+   - Navigate to SonarQube: `http://<EC2-IP>:8090` (Login with `admin`).
+   - Click User Avatar (top-right) → **My Account** → **Security**.
+   - Enter token name: `jenkins-sonar-token` → Click **Generate** → Copy the token.
+2. **Store Secret in Jenkins**:
+   - Navigate to Jenkins: `http://<EC2-IP>:8080` → **Manage Jenkins** → **Credentials** → **(global)** → **Add Credentials**.
+   - **Kind**: `Secret text`
+   - **Secret**: Paste the copied SonarQube token.
+   - **ID**: `sonarqube-token` *(must match exactly)*.
+   - Click **Create**.
+3. **Update or Create Jenkins Job**:
+   - In Jenkins, configure the pipeline job (or create `devsecops-pipeline-phase2`).
+   - In **Script Path**, enter: `my-practice/Jenkinsfile.phase2`.
+   - Click **Save**.
+4. **Execute & Inspect**:
+   - Click **Build Now**.
+   - Inspect console output to watch the Quality Gate evaluation in real-time.
+   - View your project dashboard in SonarQube: `http://<EC2-IP>:8090/dashboard?id=cwvj-devsecops-demo`.
+
+For complete architectural details, interview questions, and deep-dive explanations, read the full [Phase 2 Guide](docs/02-sast-sonarqube.md).
+
 
