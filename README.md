@@ -24,6 +24,7 @@ This repository is your one-stop hub for all the Jenkins pipelines, configuratio
 - [Jenkins Agent setup - mypractice](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Jenkins-Agent-setup)
 - [Shared Library](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/shared-library)
 - [Ultimate Project](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Project%2001)
+- [Hands-on DevSecOps Lab (my-practice)](my-practice/README.md)
   
 ---
 

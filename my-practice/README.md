@@ -43,3 +43,32 @@ Welcome to the hands-on DevSecOps engineering lab. This workspace tracks our ste
 ## Documentation Index
 
 - [Phase 1: CI Foundations & Maven Build](docs/01-ci-foundations.md)
+  - [Section 1-7: Architecture, Code Deep-Dive & Failure Analysis](docs/01-ci-foundations.md#1-architectural-overview)
+  - [Section 8: Jenkins UI Practical Setup & Execution Guide](docs/01-ci-foundations.md#8-jenkins-ui-practical-walkthrough-creating--running-the-job)
+
+---
+
+## Phase 1 Quick-Start: Setting Up Jenkins Job
+
+Follow these exact steps inside your Jenkins dashboard (`http://<EC2-IP>:8080`):
+
+1. **Create Item**: Click **New Item** → Name: `devsecops-pipeline-phase1` → Select **Pipeline** → Click **OK**.
+2. **SCM Configuration**:
+   - Scroll to **Pipeline** at the bottom.
+   - **Definition**: Select `Pipeline script from SCM`.
+   - **SCM**: Select `Git`.
+   - **Repository URL**: `https://github.com/SeshadriRC/Jenkins-Basics-To-Production.git`
+   - **Credentials**: `- none -` (public repository).
+   - **Branch Specifier**: `*/main` *(change from default `*/master`)*.
+   - **Script Path**: `my-practice/Jenkinsfile.phase1` *(type the relative path; Jenkins does not auto-browse GitHub)*.
+3. **Execute**:
+   - Click **Save**.
+   - Click **Build Now** on the left menu.
+4. **Verify**:
+   - Check **Console Output** for Maven build & JUnit test execution.
+   - Verify green stages in **Stage View**.
+   - Check **Test Result** (`2 tests / 0 failures`).
+   - Download the built uber-JAR from **Last Successful Artifacts**.
+
+For complete details, parameter breakdowns, and troubleshooting, read the full [Phase 1 Guide](docs/01-ci-foundations.md).
+
