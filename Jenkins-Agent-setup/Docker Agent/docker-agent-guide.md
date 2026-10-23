@@ -97,6 +97,10 @@ docker exec -it jenkins-agent trivy --version
 
 ```
 
+**Node status should show like this**
+
+<img width="1917" height="566" alt="image" src="https://github.com/user-attachments/assets/378b59de-53c6-4f4d-8b18-e32b59104787" />
+
 
 ---
 
