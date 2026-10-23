@@ -18,6 +18,12 @@ This repository is your one-stop hub for all the Jenkins pipelines, configuratio
 - [Day-2: CICD - Pipeline Strategies](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2002)
 - [Day-3: Jenkins Installation - docker setup - freestyle-job](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2003)
 - [Day-4: Jenkins Freestyle Power-Ups | Build Parameters, Branch Input, Poll SCM & Cron Cleanup](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2004)
+- [Day-5: Jenkins Project 1: Build, Push & Run a Flask App with Jenkins](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2005)
+- [Day-6: Jenkins Project 2 Pipeline Job](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2006)
+- [Day-7: Multi Branch Pipelines](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2007)
+- [Jenkins Agent setup - mypractice](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Jenkins-Agent-setup)
+- [Shared Library](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/shared-library)
+- [Ultimate Project](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Project%2001)
   
 ---
 
