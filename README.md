@@ -15,7 +15,8 @@ This repository is your one-stop hub for all the Jenkins pipelines, configuratio
 
 
 - [Day-1: Modern SDLC Explained](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2001)
-- 
+- [Day-2: CICD - Pipeline Strategies](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2002)
+  
 ---
 
 ## What You'll Find in This Repository
