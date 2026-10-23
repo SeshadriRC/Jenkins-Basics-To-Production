@@ -365,6 +365,11 @@ When the pipeline runs with `-Dsonar.qualitygate.wait=true`:
 6. Jenkins marks Stage 3 (`SonarQube SAST & Quality Gate`) as **FAILED**.
 7. Downstream stages (`Package Application` and `Archive Artifact`) are **ABORTED**.
 
+<img width="1912" height="483" alt="image" src="https://github.com/user-attachments/assets/2901e5c3-b647-4b24-968b-1105cefe1beb" />
+
+<img width="1908" height="872" alt="image" src="https://github.com/user-attachments/assets/2adc5895-4dbd-4604-ae3b-8c35fd5fb97a" />
+
+
 ---
 
 #### Method B: Enforce via Maven JaCoCo `jacoco:check` (Pre-Sonar Build Layer)
