@@ -13,6 +13,9 @@ This repository is your one-stop hub for all the Jenkins pipelines, configuratio
 ### Course Playlist: 
 [Jenkins: Basics to Production Playlist](https://www.youtube.com/playlist?list=PLmPit9IIdzwSiYCKOtXUGNwytXXiJ8Rv8)
 
+
+- [Day-1: Modern SDLC Explained](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/tree/main/Day%2001)
+- 
 ---
 
 ## What You'll Find in This Repository
