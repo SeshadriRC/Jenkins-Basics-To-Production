@@ -1,0 +1,64 @@
+pipeline {
+    agent {
+        label 'docker-agent'
+    }
+
+    options {
+        timeout(time: 15, unit: 'MINUTES')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    environment {
+        APP_DIR = 'my-practice/app'
+    }
+
+    stages {
+        stage('Environment Discovery') {
+            steps {
+                sh '''
+                    echo "=== Execution Node: $(hostname) ==="
+                    echo "User: $(whoami) (UID: $(id -u))"
+                    java -version
+                    mvn -version
+                '''
+            }
+        }
+
+        stage('Compile & Unit Test') {
+            steps {
+                dir("${env.APP_DIR}") {
+                    sh 'mvn clean test'
+                }
+            }
+            post {
+                always {
+                    junit testResults: "${env.APP_DIR}/target/surefire-reports/*.xml", allowEmptyResults: true
+                }
+            }
+        }
+
+        stage('Package Application') {
+            steps {
+                dir("${env.APP_DIR}") {
+                    sh 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: "${env.APP_DIR}/target/*.jar", fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Phase 1 Build #${env.BUILD_NUMBER} completed successfully!"
+        }
+        failure {
+            echo "❌ Phase 1 Build #${env.BUILD_NUMBER} failed."
+        }
+    }
+}
