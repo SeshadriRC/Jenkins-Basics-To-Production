@@ -270,15 +270,148 @@ The Quality Gate acts as an automated security boundary:
        [ Archive Artifacts ]               - Build marked FAILURE
 ```
 
-If code introduces severe bugs, unreviewed security hotspots, or drops below coverage thresholds:
-1. SonarQube's Compute Engine computes the status as `ERROR / FAILED`.
-2. The Maven execution exits with status code `1`:
+---
+
+### The SonarQube Governance Triad: Profiles vs Gates vs Coverage
+
+To master code governance in SonarQube, you must understand how these three independent concepts interact:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 1. QUALITY PROFILE (The Rulebook)                        │
+│    "What code patterns and vulnerabilities are flagged?" │
+│    - Defines active rules (Bugs, Vulnerabilities, Smells)│
+│    - Sets rule severities (Blocker, Critical, Major, etc)│
+└────────────────────────────┬─────────────────────────────┘
+                             │ (Scans Source Code & Tests)
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│ 2. CODE COVERAGE & METRICS (The Measurement)             │
+│    "How thoroughly is the code tested?"                  │
+│    - JaCoCo generates line and branch execution logs     │
+│    - Scanner computes metrics: Coverage (3.2%), Bugs (1) │
+└────────────────────────────┬─────────────────────────────┘
+                             │ (Submits Metrics to Gate)
+                             ▼
+┌──────────────────────────────────────────────────────────┐
+│ 3. QUALITY GATE (The Enforcer)                           │
+│    "Does the code meet release criteria?"                │
+│    - Compares measured metrics against Boolean thresholds│
+│    - Evaluates PASS (OK) or FAIL (ERROR)                 │
+│    - Halts or approves CI/CD deployment                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+#### 1. Quality Profiles (The Rulebook)
+- A **Quality Profile** is a collection of static analysis rules activated for a specific language (Java, XML, Python, JavaScript).
+- When SonarQube parses code into an Abstract Syntax Tree (AST), it compares the tree against the rules enabled in the active profile.
+- SonarQube ships with default profiles like `Sonar way` for Java (containing ~450+ standard rules).
+- **Custom Profiles:** Organizations often create child profiles (e.g. `Enterprise Java Security Profile`) to:
+  - Promote certain rules to **Blocker** (e.g., forbidding `System.out.println` or SQL string concatenation).
+  - Activate specialized compliance rules (OWASP Top 10, CWE Top 25).
+  - Deactivate rules that produce noise or false positives for their specific framework.
+
+#### 2. Code Coverage (The Measurement)
+- **What is Code Coverage?** It measures the percentage of executable lines and branches tested by unit tests.
+- **Why was Build #1's coverage only 3.2%?**
+  In [`AppTest.java`](../app/src/test/java/com/cloudwithvarjosh/AppTest.java), only the helper method `brandHtml()` is exercised. The `main()` method (containing `HttpServer`, `Scanner`, and string comparison) was never called during unit tests. Out of 27 coverable lines, only 1 was executed:
+  $$\text{Coverage} = \frac{1 \text{ covered line}}{27 \text{ lines}} \approx 3.7\% \text{ line coverage (3.2\% overall)}$$
+- **How JaCoCo Works:**
+  1. `jacoco-maven-plugin:prepare-agent` passes a `-javaagent` flag to the JVM during `mvn clean test`.
+  2. The agent monitors class loading and instruction execution, dumping binary counters into `target/jacoco.exec`.
+  3. The `report` goal transforms `jacoco.exec` into human-readable HTML and machine-readable `target/site/jacoco/jacoco.xml`.
+  4. The SonarQube scanner ingests `jacoco.xml` via `-Dsonar.coverage.jacoco.xmlReportPaths` and populates the project coverage metric.
+
+#### 3. Quality Gates (The Enforcer: New Code vs Overall Code)
+A Quality Gate is a set of Boolean conditions (e.g. `Coverage < 80%`, `Bugs > 0`).
+
+> [!IMPORTANT]
+> **Why did Build #1 Pass when Coverage was only 3.2%?**
+> SonarQube follows the **Clean as You Code** paradigm. The built-in `Sonar way` Quality Gate only enforces conditions on **"New Code"**:
+> - `Coverage on New Code < 80%`
+> - `Duplicated Lines on New Code > 3%`
+> - `New Issues / Violations > 0`
+> - `Security Hotspots Reviewed on New Code < 100%`
+>
+> On the very first analysis of a branch or project, SonarQube establishes a **baseline**. Because no prior commit existed on SonarQube, there was **0 lines of New Code**! Since all 27 lines were treated as baseline "Overall Code", 0 conditions failed, and SonarQube reported `QUALITY GATE STATUS: PASSED (OK)`.
+
+---
+
+### How to Make the Pipeline FAIL on Low Code Coverage
+
+In an enterprise pipeline, you can enforce coverage thresholds at two independent layers:
+
+#### Method A: Enforce via SonarQube Quality Gate (SAST Layer)
+We configure a Quality Gate condition on **Overall Code**:
+
+1. Go to SonarQube: `http://43.204.100.125:8090/quality_gates`.
+2. Notice our custom gate: **`Strict DevSecOps Gate`**.
+3. It contains two conditions:
+   - **Overall Code**: `Coverage is less than 80.0%`
+   - **New Code**: `Coverage on New Code is less than 80.0%`
+4. Associated Project: `cwvj-devsecops-demo`.
+
+**Execution Result in Jenkins:**
+When the pipeline runs with `-Dsonar.qualitygate.wait=true`:
+1. The Maven scanner finishes scanning and sends `jacoco.xml` (3.2% coverage).
+2. SonarQube evaluates `Strict DevSecOps Gate`.
+3. The condition `Coverage is less than 80.0%` **FAILS** (3.2% < 80%).
+4. SonarQube returns `status: ERROR`.
+5. Maven throws a fatal exception:
    ```text
-   [ERROR] Failed to execute goal org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar
-   [ERROR] QUALITY GATE STATUS: FAILED
+   [INFO] QUALITY GATE STATUS: FAILED - View details on http://sonarqube:9000/dashboard?id=cwvj-devsecops-demo
+   [ERROR] Failed to execute goal org.sonarsource.scanner.maven:sonar-maven-plugin:...:sonar: QUALITY GATE STATUS: FAILED
    ```
-3. Jenkins immediately marks the stage as failed.
-4. **Stages 4 (Package Application) and 5 (Archive Artifact) are never executed.** Defective code never produces a deployable binary.
+6. Jenkins marks Stage 3 (`SonarQube SAST & Quality Gate`) as **FAILED**.
+7. Downstream stages (`Package Application` and `Archive Artifact`) are **ABORTED**.
+
+---
+
+#### Method B: Enforce via Maven JaCoCo `jacoco:check` (Pre-Sonar Build Layer)
+If you want the build to fail fast during the local Maven compile/test phase before even uploading to SonarQube, configure `jacoco:check` in `pom.xml`:
+
+```xml
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>${jacoco.version}</version>
+  <executions>
+    <execution>
+      <goals><goal>prepare-agent</goal></goals>
+    </execution>
+    <execution>
+      <id>report</id>
+      <phase>test</phase>
+      <goals><goal>report</goal></goals>
+    </execution>
+    <execution>
+      <id>jacoco-check</id>
+      <phase>test</phase>
+      <goals><goal>check</goal></goals>
+      <configuration>
+        <rules>
+          <rule>
+            <element>BUNDLE</element>
+            <limits>
+              <limit>
+                <counter>LINE</counter>
+                <value>COVEREDRATIO</value>
+                <minimum>0.80</minimum> <!-- Requires 80% coverage -->
+              </limit>
+            </limits>
+          </rule>
+        </rules>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+When `mvn clean test` runs with this rule:
+```text
+[ERROR] Coverage checks have failed: Rule violated for bundle 'CVWJ DevSecOps Demo': lines covered ratio is 0.03, minimum is 0.80
+```
+This halts the build at Stage 2 before wasting CPU and compute time on static analysis.
 
 ---
 
