@@ -1,1 +1,2 @@
-sdfsdf
+- [Declarative vs Scripted Pipeline](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/blob/main/Concepts/Declarative-Script.md)
+- [Sample-Pipeline](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/blob/main/Concepts/Sample-pipeline.md)
