@@ -1,0 +1,2 @@
+- **Declarative:** Structured syntax with predefined sections such as `pipeline`, `stages`, and `steps`.
+- **Scripted:** More flexible Groovy-based syntax using a `node` block and imperative logic.
