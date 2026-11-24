@@ -1,3 +1,5 @@
+[Sample jenkinsfile](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/blob/main/Concepts/Sample-pipeline.md#jenkins-declarative-pipeline--with-comments)
+
 # Jenkins Sample Pipeline for DevOps Interview
 
 ## 1. Pipeline Overview
