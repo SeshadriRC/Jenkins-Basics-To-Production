@@ -143,6 +143,44 @@ pipeline {
 }
 ```
 
+**Dockerfile for above project**
+
+```bash
+# Stage 1: Build the Java application
+FROM maven:3.9-eclipse-temurin-17 AS build
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy Maven configuration file
+COPY pom.xml .
+
+# Download project dependencies
+RUN mvn dependency:go-offline
+
+# Copy application source code
+COPY src ./src
+
+# Build the application and generate the JAR file
+RUN mvn clean package -DskipTests
+
+
+# Stage 2: Run the Java application
+FROM eclipse-temurin:17-jre
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the generated JAR from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose application port
+EXPOSE 8080
+
+# Start the Java application
+CMD ["java", "-jar", "app.jar"]
+```
+
 ## Pipeline Flow
 
 ```text
