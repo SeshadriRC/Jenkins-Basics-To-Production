@@ -1,2 +1,3 @@
 - [Declarative vs Scripted Pipeline](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/blob/main/Concepts/Declarative-Script.md)
 - [Sample-Declarative-Pipeline](https://github.com/SeshadriRC/Jenkins-Basics-To-Production/blob/main/Concepts/Sample-pipeline.md)
+- [mvn lifecycle](https://github.com/SeshadriRC/devops-cloud-interview-guide/blob/main/05-cicd/02-popular-maven-builds-targets.md)
